@@ -14,7 +14,7 @@ COPY settings.gradle .
 COPY src src
 
 # Build the application using Gradle
-RUN ./gradlew clean build
+RUN ./gradlew clean bootJar
 
 # Start with the official Java 11 base image
 FROM adoptopenjdk:11-jre-hotspot
