@@ -27,3 +27,5 @@ COPY --from=build /app/build/libs/*.jar app.jar
 
 # Set the startup command
 CMD ["java", "-jar", "app.jar"]
+
+EXPOSE 8080

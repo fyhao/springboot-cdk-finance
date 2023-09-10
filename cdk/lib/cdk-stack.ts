@@ -14,13 +14,27 @@ export class MyEcsFargateStack extends cdk.Stack {
     const cluster = new ecs.Cluster(this, 'MyCluster', { vpc: vpc });
 
     // Define the Fargate Service
-    new ecsPatterns.ApplicationLoadBalancedFargateService(this, 'MyFargateService', {
-      cluster,
-      taskImageOptions: {
-        image: ecs.ContainerImage.fromAsset('/home/ec2-user/environment/springboot-cdk-app/java'), // Path to your Dockerfile
-      },
-      memoryLimitMiB: 512,
-      desiredCount: 1,
+    const fargateService = new ecsPatterns.ApplicationLoadBalancedFargateService(this, 'MyFargateService', {
+    cluster,
+    taskImageOptions: {
+      image: ecs.ContainerImage.fromAsset('/home/ec2-user/environment/springboot-cdk-app/java'), // Path to your Dockerfile
+      containerPort: 8080 // This is where you specify the port for your container
+    },
+    memoryLimitMiB: 512,
+    desiredCount: 1,
+    listenerPort: 80, // ALB will listen on port 80
+    publicLoadBalancer: true, // Ensure the load balancer is publicly accessible
+});
+
+ // Customize health check properties
+    fargateService.targetGroup.configureHealthCheck({
+      path: "/finance", // adjust this to your application's health check endpoint
+      interval: cdk.Duration.seconds(30), 
+      timeout: cdk.Duration.seconds(5),
+      unhealthyThresholdCount: 2,
+      healthyThresholdCount: 2,
     });
+
+
   }
 }
