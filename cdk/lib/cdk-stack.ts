@@ -1,16 +1,26 @@
-import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as cdk from '@aws-cdk/core';
+import * as ecs from '@aws-cdk/aws-ecs';
+import * as ecsPatterns from '@aws-cdk/aws-ecs-patterns';
+import * as ec2 from '@aws-cdk/aws-ec2';  // <-- Added this import for VPC
 
-export class CdkStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+export class MyEcsFargateStack extends cdk.Stack {
+  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
+    // Create a new VPC for the cluster
+    const vpc = new ec2.Vpc(this, 'MyVpc');  // <-- Used the correct namespace 'ec2' here
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'CdkQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    // Define the ECS Cluster (where your service will be deployed)
+    const cluster = new ecs.Cluster(this, 'MyCluster', { vpc: vpc });
+
+    // Define the Fargate Service
+    new ecsPatterns.ApplicationLoadBalancedFargateService(this, 'MyFargateService', {
+      cluster,
+      taskImageOptions: {
+        image: ecs.ContainerImage.fromAsset('/home/ec2-user/environment/springboot-cdk-app/java'), // Path to your Dockerfile
+      },
+      memoryLimitMiB: 512,
+      desiredCount: 1,
+    });
   }
 }
