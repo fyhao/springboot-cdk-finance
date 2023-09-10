@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.5.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+}
+
+group = 'com.fyhao.springbootapps'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '11'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot Web Starter for RESTful services
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Spring Boot Starter Data JPA for database operations
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // MySQL Driver
+    implementation 'mysql:mysql-connector-java'
+
+    // Spring Boot Starter for testing
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    
+    testImplementation 'com.h2database:h2'
+    
+    implementation 'org.projectlombok:lombok:1.18.22'
+
+
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
